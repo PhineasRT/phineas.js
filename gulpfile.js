@@ -17,7 +17,10 @@ gulp.task('babel', function () {
 })
 
 gulp.task('browserify', ['babel'], function () {
-  return browserify(mainFilePath)
+  return browserify({
+    entries: mainFilePath,
+    transform: [['envify', {'global': true, '_': 'purge', BUILD_ENV: process.env.BUILD_ENV}]] 
+  })
     .bundle()
     .pipe(source('bundle.js'))
     .pipe(buffer())
