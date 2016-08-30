@@ -1,5 +1,6 @@
 import Table from './Table'
 import services from './services'
+import _ from 'lodash'
 
 var log = console.log.bind(console, '[App]')
 
@@ -20,11 +21,14 @@ class App {
       return ;  
     }
 
+    var self = this;
     services.initialize({appID, secret})
       .then(function (res) {
-        this.endpoints = res.services
-        this.tables.forEach(function (t) {
-          t.emit('ep', this.endpoints)
+        self.endpoints = _.mapValues(res.services, ep => 'http://' + ep)
+        self.endpoints.rp = self.endpoints.rp + ':3001'
+        
+        self.tables.forEach(function (t) {
+          t.emit('ep', self.endpoints)
         })
       })
       .catch(function (err) {
@@ -40,7 +44,7 @@ class App {
       table: {name: tableName}
     })
 
-    if(this.endpoints) {
+    if(Object.keys(this.endpoints) > 0) {
       table.emit('ep', this.endpoints)
     }
 
