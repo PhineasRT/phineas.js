@@ -44,7 +44,7 @@ class App {
       table: {name: tableName}
     })
 
-    if(Object.keys(this.endpoints) > 0) {
+    if(Object.keys(this.endpoints).length > 0) {
       table.emit('ep', this.endpoints)
     }
 
