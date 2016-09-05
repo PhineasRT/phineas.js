@@ -1,8 +1,8 @@
 {
-  "name": "phineas-js",
+  "name": "phineas-sdk",
   "version": "1.0.0",
   "description": "Phineas JS client",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "snazzy"
   },
