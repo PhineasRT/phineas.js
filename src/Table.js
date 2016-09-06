@@ -2,14 +2,18 @@ import EventEmitter from 'events'
 import io from 'socket.io-client'
 import { last, initial } from 'lodash'
 import request from 'request-promise'
+var hash = require('object-hash');
+var once = require('once')
 
-var log = console.log.bind(console, '[Table]')
+var log = console.log.bind(console, '[phineas-sdk/Table]')
+var error = console.error.bind(console, '[phineas-sdk/Table]')
 
 class Table extends EventEmitter {
   // endpoints - service endpoints (IPs)
   constructor ({endpoints, table}) {
     super()
-    log("endpoints:", endpoints, "table", table)
+    // console.log('constructor called')
+    // log("endpoints:", endpoints, "table", table)
 
     this.endpoints = endpoints
     this.table = table.name
@@ -18,10 +22,12 @@ class Table extends EventEmitter {
     this.ws = false  // tells whether the websocet connection has been established
     this.connected = false
     this.queue = [] // queue to hold subscriptions until connection is made
+    this.subscriptions = []
+    this.lastEvent = []
 
     var self = this;
     this.on('ep', function (endpoints) {
-      log('[event] ep', endpoints)
+      // log('[event] ep', endpoints)
       self.endpoints = endpoints,
       self.socket = io(endpoints.phineas)
 
@@ -33,16 +39,7 @@ class Table extends EventEmitter {
   }
 
   subscribe(query, ...args) {
-    log("SUBSCRIBE CALLED")
-
-    if(!this.connected) {
-      this.queue.push({query, args})
-      return this;
-    }
-
-    log("calling without pushing to queue", args)
-    subscribe.call(this, query, args)
-    return this;
+    return subscribe.call(this, query, args)
   }
 
   callOnce(query, ...args) {
@@ -63,7 +60,7 @@ export default Table
 
 // web socket on 'connection'
 function onConnection (clientId) {
-  log('connected', clientId)
+  // log('connected', clientId)
   var self = this
 
   self.ws = true;
@@ -74,19 +71,17 @@ function onConnection (clientId) {
   // drain queue once subscription is made
   self.queue.forEach(function (params) {
     let {query, args} = params
-    log("args", args)
+    // log("args", args)
     self.subscribe(query, ...args);
   })
 }
 
 
 function subscribe (query, args) {
-  log(`subscribe request. Query : ${query}, Args: ${args}`)
-  
   let self = this
 
   if (!self.table) {
-    console.error('Table name not specified')
+    error('Table name not specified')
     return self
   }
 
@@ -99,10 +94,25 @@ function subscribe (query, args) {
 
   callback = last(args)    // last arg as callback
   let subArgs = initial(args)  // args to pass to subscription request (all except last)
-  log(`subscribe request for ${self.table} with args ${JSON.stringify(subArgs)}`)
+  const argsAsString = JSON.stringify(subArgs)
+  // log(`subscribe request. Table: ${self.table} | Query : ${query} | Args: ${subArgs}`)
 
-  httpSubscribe.call(self, query, subArgs, callback)
-  wsSubscribe.call(self, query, subArgs)
+  const subName = query
+
+  const channel = `${self.table}::${subName}::${argsAsString}`
+  // log('channel', channel)
+
+  if(!self.subscriptions[channel])
+    self.subscriptions[channel] = new EventEmitter()
+
+  if(self.connected) {
+    httpSubscribe.call(self, query, subArgs, callback)
+    wsSubscribe.call(self, query, subArgs)
+  } else {
+    self.queue.push({query, args})
+  }
+
+  return self.subscriptions[channel]
 }
 
 // first data load
@@ -119,7 +129,7 @@ function httpSubscribe (query, args, callback) {
 
   request(options)
     .then(function (res) {
-      log('First data load response:', res)
+      // log('First data load response:', res)
       callback(null, res)
     })
     .catch(function (err) {
@@ -127,6 +137,8 @@ function httpSubscribe (query, args, callback) {
       callback(err)
     })
 }
+
+const onUpdateFn = once(onUpdate)
 
 // web-socket subscribe request
 function wsSubscribe (query, args) {
@@ -140,10 +152,23 @@ function wsSubscribe (query, args) {
   }
 
   self.socket.emit('subscribe', reqParams)
+  onUpdateFn.call(self)
+}
+
+function onUpdate() {
+  var self = this
+
+  log('on:update')
   self.socket.on('db:update', function (msg) {
-    log('db:update', msg)
+    // log('db:update', msg)
+    var channel = msg.channel;
     var event = JSON.parse(msg.notification)
-    self.emit(event.eventType, event);
+
+    if(self.lastEvent[channel] === hash(event))
+      return;
+
+    self.lastEvent[channel] = hash(event)
+    self.subscriptions[channel].emit(event.eventType, event);
   })
 }
 
