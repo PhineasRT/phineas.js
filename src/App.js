@@ -3,6 +3,7 @@ import services from './services'
 import _ from 'lodash'
 
 var log = console.log.bind(console, '[App]')
+var error = console.error.bind(console, '[sdk/App]')
 
 class App {
 	constructor(appID, secret, opts) {
@@ -17,7 +18,7 @@ class App {
         t.emit('ep', this.endpoints)
       })
 
-      log('[dev:true] endpoints', this.endpoints)
+      // log('[dev:true] endpoints', this.endpoints)
       return ;  
     }
 
@@ -32,7 +33,7 @@ class App {
         })
       })
       .catch(function (err) {
-        log(err)
+        error("Error trying to initialize services", err)
       })
   }
 

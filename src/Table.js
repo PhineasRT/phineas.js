@@ -22,7 +22,7 @@ class Table extends EventEmitter {
     this.ws = false  // tells whether the websocet connection has been established
     this.connected = false
     this.queue = [] // queue to hold subscriptions until connection is made
-    this.subscriptions = []
+    this.subscriptions = {}
     this.lastEvent = []
 
     var self = this;
@@ -100,7 +100,6 @@ function subscribe (query, args) {
   const subName = query
 
   const channel = `${self.table}::${subName}::${argsAsString}`
-  // log('channel', channel)
 
   if(!self.subscriptions[channel])
     self.subscriptions[channel] = new EventEmitter()
@@ -152,15 +151,15 @@ function wsSubscribe (query, args) {
   }
 
   self.socket.emit('subscribe', reqParams)
-  onUpdateFn.call(self)
+  onUpdate.call(self)
 }
 
 function onUpdate() {
   var self = this
 
-  log('on:update')
+  // log('on:update')
   self.socket.on('db:update', function (msg) {
-    // log('db:update', msg)
+    // log('db:update', msg.channel)
     var channel = msg.channel;
     var event = JSON.parse(msg.notification)
 
@@ -168,7 +167,8 @@ function onUpdate() {
       return;
 
     self.lastEvent[channel] = hash(event)
-    self.subscriptions[channel].emit(event.eventType, event);
+    if(self.subscriptions[channel])
+      self.subscriptions[channel].emit(event.eventType, event);
   })
 }
 

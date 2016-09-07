@@ -4,7 +4,7 @@ import config from './config'
 const backend = config.backend[process.env.BUILD_ENV]
 const log = console.log.bind(console, '[sdk/services]')
 
-log("[env]", process.env.BUILD_ENV)
+// log("[env]", process.env.BUILD_ENV)
 
 function initialize ({appID, secret}) {
   var project = {appID, secret}
@@ -19,11 +19,11 @@ function initialize ({appID, secret}) {
 
   return request(options)
     .then(function (res) {
-      log(res)
+      // log(res)
       if(!res.ok) throw new Error("could not get services")
 
       if(res.status === 'creating') {
-        log(`Application ${appID} not created yet`)
+        // log(`Application ${appID} not created yet`)
         return Promise.resolve({services: []})
       }
 
