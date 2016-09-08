@@ -12,7 +12,7 @@ var _config = require('./config');
 
 var _config2 = _interopRequireDefault(_config);
 
-var backend = _config2['default'].backend["prod"];
+var backend = _config2['default'].backend[process.env.BUILD_ENV];
 // const log = console.log.bind(console, '[sdk/services]')
 
 // log("[env]", process.env.BUILD_ENV)

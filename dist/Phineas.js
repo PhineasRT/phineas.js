@@ -1,9 +1,5 @@
 'use strict';
 
-var _createClass = require('babel-runtime/helpers/create-class')['default'];
-
-var _classCallCheck = require('babel-runtime/helpers/class-call-check')['default'];
-
 var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
 
 Object.defineProperty(exports, '__esModule', {
@@ -14,24 +10,32 @@ var _App = require('./App');
 
 var _App2 = _interopRequireDefault(_App);
 
-var Phineas = (function () {
-  function Phineas() {
-    _classCallCheck(this, Phineas);
-  }
+var _objectHash = require('object-hash');
 
-  _createClass(Phineas, null, [{
-    key: 'initialize',
-    value: function initialize(_ref, opts) {
-      var appID = _ref.appID;
-      var secret = _ref.secret;
+var _objectHash2 = _interopRequireDefault(_objectHash);
+
+console.log('PHIENAS');
+
+var Phineas = {
+  apps: {},
+
+  initialize: function initialize(_ref, opts) {
+    var appID = _ref.appID;
+    var secret = _ref.secret;
+
+    var h = (0, _objectHash2['default'])({ appID: appID, secret: secret });
+    if (this.apps[h]) {
+      console.log('returning instance');
+      return this.apps[h];
+    } else {
+      console.log('new instance');
 
       var app = new _App2['default'](appID, secret, opts);
+      this.apps[h] = app;
       return app;
     }
-  }]);
-
-  return Phineas;
-})();
+  }
+};
 
 exports['default'] = Phineas;
 module.exports = exports['default'];

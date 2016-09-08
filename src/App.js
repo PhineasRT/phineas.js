@@ -10,6 +10,7 @@ class App {
     // properties
     this.endpoints = {}
     this.tables = []
+    this.tablesCache = {}
 
     if (opts && opts.dev) {
       this.endpoints.rp = 'http://localhost:3001'
@@ -38,6 +39,11 @@ class App {
   }
 
   table (tableName) {
+    if (this.tablesCache[tableName]) {
+      console.log('return TABLE created instance')
+      return this.tablesCache[tableName]
+    }
+
     var table = new Table({
       endpoints: this.endpoints,
       table: {name: tableName}
@@ -47,6 +53,7 @@ class App {
       table.emit('ep', this.endpoints)
     }
 
+    this.tablesCache[tableName] = table
     this.tables.push(table)
     return table
   }

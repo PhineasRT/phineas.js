@@ -34,6 +34,7 @@ var App = (function () {
     // properties
     this.endpoints = {};
     this.tables = [];
+    this.tablesCache = {};
 
     if (opts && opts.dev) {
       this.endpoints.rp = 'http://localhost:3001';
@@ -64,6 +65,11 @@ var App = (function () {
   _createClass(App, [{
     key: 'table',
     value: function table(tableName) {
+      if (this.tablesCache[tableName]) {
+        console.log('return TABLE created instance');
+        return this.tablesCache[tableName];
+      }
+
       var table = new _Table2['default']({
         endpoints: this.endpoints,
         table: { name: tableName }
@@ -73,6 +79,7 @@ var App = (function () {
         table.emit('ep', this.endpoints);
       }
 
+      this.tablesCache[tableName] = table;
       this.tables.push(table);
       return table;
     }

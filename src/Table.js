@@ -3,7 +3,7 @@ import io from 'socket.io-client'
 import { last, initial } from 'lodash'
 import request from 'request-promise'
 var hash = require('object-hash')
-// var once = require('once')
+var once = require('once')
 
 // var log = console.log.bind(console, '[phineas-sdk/Table]')
 var error = console.error.bind(console, '[phineas-sdk/Table]')
@@ -12,7 +12,6 @@ class Table extends EventEmitter {
   // endpoints - service endpoints (IPs)
   constructor ({endpoints, table}) {
     super()
-    // console.log('constructor called')
     // log("endpoints:", endpoints, "table", table)
 
     this.endpoints = endpoints
@@ -140,7 +139,7 @@ function httpSubscribe (query, args, callback) {
 }
 
 // make sure onUpdate called only once
-// const onUpdateFn = once(onUpdate)
+const onUpdateFn = once(onUpdate)
 
 // web-socket subscribe request
 function wsSubscribe (query, args) {
@@ -154,7 +153,7 @@ function wsSubscribe (query, args) {
   }
 
   self.socket.emit('subscribe', reqParams)
-  onUpdate.call(self)
+  onUpdateFn.call(self)
 }
 
 function onUpdate () {
