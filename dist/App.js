@@ -66,7 +66,6 @@ var App = (function () {
     key: 'table',
     value: function table(tableName) {
       if (this.tablesCache[tableName]) {
-        console.log('return TABLE created instance');
         return this.tablesCache[tableName];
       }
 

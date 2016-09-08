@@ -1,8 +1,6 @@
 import App from './App'
 import hash from 'object-hash'
 
-console.log('PHIENAS')
-
 var Phineas = {
   apps: {},
 

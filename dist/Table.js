@@ -33,7 +33,7 @@ var _requestPromise2 = _interopRequireDefault(_requestPromise);
 var hash = require('object-hash');
 var once = require('once');
 
-var log = console.log.bind(console, '[phineas-sdk/Table]');
+// var log = console.log.bind(console, '[phineas-sdk/Table]')
 var error = console.error.bind(console, '[phineas-sdk/Table]');
 
 var Table = (function (_EventEmitter) {
@@ -48,7 +48,6 @@ var Table = (function (_EventEmitter) {
     _classCallCheck(this, Table);
 
     _get(Object.getPrototypeOf(Table.prototype), 'constructor', this).call(this);
-    // console.log('constructor called')
     // log("endpoints:", endpoints, "table", table)
 
     this.endpoints = endpoints;
@@ -63,7 +62,7 @@ var Table = (function (_EventEmitter) {
 
     var self = this;
     this.on('ep', function (endpoints) {
-      log('[event] ep', endpoints);
+      // log('[event] ep', endpoints)
       self.endpoints = endpoints;
       self.socket = (0, _socketIoClient2['default'])(endpoints.phineas);
 
@@ -152,7 +151,6 @@ function _subscribe(query, args) {
   var channel = self.table + '::' + subName + '::' + argsAsString;
 
   if (!self.subscriptions[channel]) {
-    log('new event emiiter');
     self.subscriptions[channel] = new _events2['default']();
   }
 
@@ -208,7 +206,7 @@ function wsSubscribe(query, args) {
 function onUpdate() {
   var self = this;
 
-  log('on:update');
+  // log('on:update')
   self.socket.on('db:update', function (msg) {
     // log('db:update', msg.channel)
     var channel = msg.channel;

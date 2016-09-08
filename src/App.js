@@ -40,7 +40,6 @@ class App {
 
   table (tableName) {
     if (this.tablesCache[tableName]) {
-      console.log('return TABLE created instance')
       return this.tablesCache[tableName]
     }
 
