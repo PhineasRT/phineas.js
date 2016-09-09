@@ -84,10 +84,26 @@ var Table = (function (_EventEmitter) {
       return _subscribe.call(this, query, args);
     }
   }, {
-    key: 'callOnce',
-    value: function callOnce(query) {
+    key: 'unsubscribe',
+    value: function unsubscribe(query) {
       for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
         args[_key2 - 1] = arguments[_key2];
+      }
+
+      var argsAsString = JSON.stringify(args);
+      var subName = query;
+      var channel = this.table + '::' + subName + '::' + argsAsString;
+
+      if (this.subscriptions[channel]) {
+        this.subscriptions[channel].removeAllListeners();
+        delete this.subscriptions[channel];
+      }
+    }
+  }, {
+    key: 'callOnce',
+    value: function callOnce(query) {
+      for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+        args[_key3 - 1] = arguments[_key3];
       }
 
       if (!((0, _lodash.last)(args) instanceof Function)) {

@@ -42,6 +42,18 @@ class Table extends EventEmitter {
     return subscribe.call(this, query, args)
   }
 
+  unsubscribe(query, ...args) {
+    const argsAsString = JSON.stringify(args)
+    const subName = query
+    const channel = `${this.table}::${subName}::${argsAsString}`
+
+    if (this.subscriptions[channel]) {
+      this.subscriptions[channel].removeAllListeners()
+      delete this.subscriptions[channel]
+    }
+
+  } 
+
   callOnce (query, ...args) {
     if (!(last(args) instanceof Function)) {
       console.warn('[WARN] no callback function specified. A function (err, result) { } should be provided ' +
