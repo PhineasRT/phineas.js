@@ -42,7 +42,7 @@ class Table extends EventEmitter {
     return subscribe.call(this, query, args)
   }
 
-  unsubscribe(query, ...args) {
+  unsubscribe (query, ...args) {
     const argsAsString = JSON.stringify(args)
     const subName = query
     const channel = `${this.table}::${subName}::${argsAsString}`
@@ -51,8 +51,7 @@ class Table extends EventEmitter {
       this.subscriptions[channel].removeAllListeners()
       delete this.subscriptions[channel]
     }
-
-  } 
+  }
 
   callOnce (query, ...args) {
     if (!(last(args) instanceof Function)) {
