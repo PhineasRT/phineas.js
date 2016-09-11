@@ -8,7 +8,7 @@ npm install --save phineas-sdk
 or standalone build in `dist/standalone.js` which makes `Phineas` available globally.
 
 ### Usage
-```
+```javascript
 const Phineas = require('phineas-sdk')
 
 // appID and secret available from web UI 
