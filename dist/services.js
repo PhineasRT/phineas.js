@@ -34,7 +34,7 @@ function initialize(_ref) {
     if (!res.ok) throw new Error('could not get services');
 
     if (res.status === 'creating') {
-      // log(`Application ${appID} not created yet`)
+      console.log('[phineas-sdk] Application ' + appID + ' not created yet');
       return _Promise.resolve({ services: [] });
     }
 
