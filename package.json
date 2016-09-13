@@ -1,6 +1,6 @@
 {
   "name": "phineas-sdk",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Phineas JS client",
   "main": "./dist/index.js",
   "scripts": {
