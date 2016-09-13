@@ -12,7 +12,7 @@ var _config = require('./config');
 
 var _config2 = _interopRequireDefault(_config);
 
-var backend = _config2['default'].backend["prod"];
+var backend = _config2['default'].backend[process.env.BUILD_ENV];
 // const log = console.log.bind(console, '[sdk/services]')
 
 // log("[env]", process.env.BUILD_ENV)
@@ -30,8 +30,12 @@ function initialize(_ref) {
   };
 
   return (0, _requestPromise2['default'])(options).then(function (res) {
-    // log(res)
-    if (!res.ok) throw new Error('could not get services');
+    console.log("this", res);
+
+    if (!res.ok) {
+      console.log('herehere');
+      // throw new Error('could not get services')
+    }
 
     if (res.status === 'creating') {
       console.log('[phineas-sdk] Application ' + appID + ' not created yet');

@@ -18,7 +18,9 @@ function initialize ({appID, secret}) {
   return request(options)
     .then(function (res) {
       // log(res)
-      if (!res.ok) throw new Error('could not get services')
+      if (!res.ok) {
+        throw new Error('could not get services')
+      }
 
       if (res.status === 'creating') {
         console.log(`[phineas-sdk] Application ${appID} not created yet`)
