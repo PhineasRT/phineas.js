@@ -46,6 +46,22 @@ UserTable.unsubscribe('getUserInfo', username)
 
 ```
 
+Instead of subscribing to a query, you can also make a one time call using the call `callOnce()` method.
+
+```javascript
+const UserTable = app.table('Users')
+
+UserTable.callOnce('getUserInfo', username, function (err, data) {
+  if(err) {
+    throw err
+  } 
+
+  console.log(data)
+})
+
+```
+
+
 
 
 
